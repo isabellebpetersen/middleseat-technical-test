@@ -5,17 +5,24 @@
 
     )
 }}
-
+/*
+    Overall, this model takes cleaned donation records from ActBlue and enriches them with extra fields 
+    that will be useful for reporting later on, namely internal client codes, flags for exclusions, standardized 
+    donation sources, a classification for recurring donations, and timestamps that are more reporting-friendly.
+*/
 
 WITH
+    --use cleaned up ActBlue donation data
     donations AS (
         SELECT * FROM {{ ref('int_actblue__02__donations') }}
     ),
 
+    --match each ActBlue donation to our internal client identities
     codes AS (
         SELECT * FROM {{ source('auxiliary', 'actblue_entities_to_client_code') }}
     ),
 
+    --Pull source types by category
     sources AS (
         SELECT
             wdl_client_code,
@@ -25,6 +32,7 @@ WITH
         FROM {{ source('auxiliary', 'auxiliary__source_categories_merged') }}
     ),
 
+    -- exclude certain transations that shouldn't count towards donation reporting
     finance_exclusions AS (
         SELECT
             wdl_client_code,
@@ -76,12 +84,13 @@ SELECT
         WHEN donations.is_recurring = 1 THEN 'Existing'
         WHEN donations.is_recurring = 0 THEN 'One-time'
         ELSE NULL
-    END AS recurring_type,
+    END AS recurring_type, --Creates a new category field for whether donations are recurring (new or existing) or one-time
 
     donations.is_refunded,
     donations.utc_refunded_at,
     {{ normalize_timestamp('donations.utc_refunded_at', 'UTC', 'US/Eastern') }} AS et_refunded_at,
 
+    --Makes it so finance exclusions override normal source logic when assigning source types
     COALESCE(finance_exclusions.exclude_from_digital, FALSE) AS is_finance_exclusion,
     CASE WHEN finance_exclusions.order_number IS NOT NULL THEN 'Finance'
             ELSE sources.source_type
