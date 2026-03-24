@@ -8,7 +8,10 @@
     This model keeps one transaction per row, the idea being that later downstream I can have 
     more flexibility with aggregating by source type, date, recurring status, or any other 
     dimensions I choose. I also added a dimension to describe who the donor was, which could be 
-    useful later on if I wanted to report on the level of unique donors.
+    useful later on if I wanted to report on the level of unique donors. Note that given the constraints of 
+    this test, my dashboard still ended up being aggregated at the date/source level but given the chance to 
+    structure the reporting table myself I would have given myself the flexibility to aggregate all of this
+    later in Looker (or Tableau). 
 */
 SELECT
     wdl_client_code,
