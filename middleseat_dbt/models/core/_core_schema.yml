@@ -2,9 +2,51 @@ version: 2
 
 models:
   - name: core__donations
+    description: "standardized donation records from ActBlue and Shopify into a shared schema so downstream reporting can analyze donations across sources."
+   
     columns:
       - name: wdl_transaction_id
-        description: ""
+        description: "Unique internal identifier built from the donation source and the transaction ID"
         data_tests:
           - unique
           - not_null
+          
+      - name: transaction_id
+        description: "Original transaction identifier from the donation source platform (e.g. Shopify order ID)"
+        
+      - name: wdl_client_code
+        description: "Internal client code associated with the donation"
+        
+      - name: utc_created_at
+        description: "Timestamp when the donation was created in UTC"
+        
+      - name: et_created_at
+        description: "Timestamp when the donation was created, converted to Eastern Time"
+        
+      - name: amount
+        description: "Gross donation amount before refunds"
+        
+      - name: post_refund_amount
+        description: "Donation amount remaining after refunds are applied"
+        
+      - name: is_recurring
+        description: "Indicator for whether the donation is part of a recurring contribution"
+        
+      - name: recurring_type
+        description: "Classifies a donation as one-time, a new recurring contribution, or an existing recurring contribution"
+        
+      - name: source_type
+        description: "Mapped source category for the donation based on available source information"
+        
+      - name: likely_source_type
+        description: "Standardized source category for the donation, either using available information or inferred source"
+        
+      - name: refcode
+        description: "Tracking code 
+        
+      - name: form_name
+        description: "Name of the donation form associated with the transaction"
+        
+      - name: is_finance_exclusion
+        description: "Indicator for whether the donation should be excluded from standard fundraising source reporting"
+        
