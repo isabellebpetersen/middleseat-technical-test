@@ -8,7 +8,7 @@
 {%- if execute -%}
 
     {%- call statement('get_tables', fetch_result=True) -%}
-        SELECT distinct --Look in the database catalog of tables, find the tables that match the given schema pattern
+        SELECT distinct --Look in the database catalog of tables, find the tables that match the given schema pattern (taking into account the following)
             table_schema,
             table_name
         FROM INFORMATION_SCHEMA.TABLES
@@ -56,9 +56,9 @@
 
     {%- set table_list = load_result('get_tables') -%} --Loads the resulting tables into a variable
 
-    {%- if table_list and table_list['table'] -%} --Creates a list of the resulting tables
+    {%- if table_list and table_list['table'] -%} --Creates a list to hold the resulting tables
         {%- set tbl_relations = [] -%}
-        {%- for row in table_list['table'] -%} --Keeps each resulting table as a dbt relation (a specific object type that can be propoerly referenced later)
+        {%- for row in table_list['table'] -%} --Keeps each resulting table as a dbt relation (a specific object type that can be properly referenced later)
             {%- set tbl = api.Relation.create(
                 database=database,
                 schema=row.table_schema,
