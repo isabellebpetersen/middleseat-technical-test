@@ -1,3 +1,7 @@
+/*
+    This model creates one shared donation table that combines donations from ActBlue and Shopify,
+    standardizing their fields in order for ease of use in later reporting.
+*/
 {%- set schema_pattern = 'dbt_%' -%}
 {%- set precore_table_name = 'precore_shopify__orders_v2' -%}
 {%- set shopify_tables = get_precore_tables(schema_pattern, precore_table_name, schema_exclude=['dbt_precore'], model_exclude=['precore_shopify__orders_v1']) -%}
@@ -11,7 +15,7 @@
 
 
 WITH
-
+--Pull relevant info from the ActBlue donations, fitting to the new combined core donations structure
     actblue AS (
         SELECT
             wdl_client_code,
@@ -64,6 +68,7 @@ WITH
         FROM {{ ref('precore_actblue__donations') }}
     ),
 
+--Dynamically union matching Shopify precore tables before mapping them into the core donations structure.
     shopify_tables_unioned AS (
         {{ dbt_utils.union_relations(
                 shopify_tables,
@@ -72,6 +77,7 @@ WITH
         }}
     ),
 
+--Pull relevant info from newly unioned Shopify tables, fitting to the new combined core donations structure
     shopify AS (
         SELECT
             wdl_client_code,
@@ -122,6 +128,7 @@ WITH
         FROM shopify_tables_unioned
     ),
 
+--Final step to combine standardized/enriched tables from both ActBlue and Shopify
     unioned AS (
         SELECT * FROM actblue
         UNION ALL
