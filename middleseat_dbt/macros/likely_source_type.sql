@@ -8,7 +8,7 @@
     CASE 
         WHEN {{ source_type }} IS NOT NULL THEN {{ source_type }} --First, if a source type is already specified, use that
 
-        {% for field in search_fields %} --Search through refcode and form name looking for patterns, evidence of where the donation came from
+        {% for field in search_fields %} -- Search through refcode and form name looking for patterns, evidence of where the donation came from
             WHEN LEFT(lower(replace( {{ field }},'_','-')), 2) = 'em' THEN 'Email'
             WHEN LEFT(lower(replace( {{ field }},'_','-')), 3) = 'ads' THEN 'Ads'
             WHEN lower(replace( {{ field }},'_','-')) ilike '%p2p%' AND lower(replace( {{ field }},'_','-')) ilike '%-rental-%' THEN 'Texting - P2P Rental'
