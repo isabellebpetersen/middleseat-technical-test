@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: core__donations
-    description: "standardized donation records from ActBlue and Shopify into a shared schema so downstream reporting can analyze donations across sources."
+    description: "Standardizes and combines donation records from ActBlue and Shopify into a shared schema so downstream reporting can analyze donations across sources."
    
     columns:
       - name: wdl_transaction_id
@@ -42,7 +42,7 @@ models:
         description: "Standardized source category for the donation, either using available information or inferred source"
         
       - name: refcode
-        description: "Tracking code 
+        description: "Tracking code associated with the donation source"
         
       - name: form_name
         description: "Name of the donation form associated with the transaction"
