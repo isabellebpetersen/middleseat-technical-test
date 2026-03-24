@@ -32,7 +32,7 @@ WITH
         FROM {{ source('auxiliary', 'auxiliary__source_categories_merged') }}
     ),
 
-    -- exclude certain transations that shouldn't count towards donation reporting
+    -- Creates a group of certain transations that shouldn't count towards standatd donation reporting (Finance)
     finance_exclusions AS (
         SELECT
             wdl_client_code,
@@ -84,7 +84,7 @@ SELECT
         WHEN donations.is_recurring = 1 THEN 'Existing'
         WHEN donations.is_recurring = 0 THEN 'One-time'
         ELSE NULL
-    END AS recurring_type, --Creates a new category field for whether donations are recurring (new or existing) or one-time
+    END AS recurring_type, --Creates a new field to classify whether donations are recurring (new or existing) or one-time
 
     donations.is_refunded,
     donations.utc_refunded_at,
